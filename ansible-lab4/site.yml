@@ -1,0 +1,45 @@
+---
+- name: Install MySQL and configure iVolve database
+  hosts: all
+  become: yes
+  vars_files:
+    - vault.yml
+
+  tasks:
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+        update_cache: yes
+
+    - name: Ensure MySQL service is running
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create iVolve database
+      mysql_db:
+        name: iVolve
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Create MySQL user for iVolve DB
+      mysql_user:
+        name: "{{ mysql_user }}"
+        password: "{{ mysql_user_password }}"
+        priv: "iVolve.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Validate iVolve DB exists
+      command: >
+        mysql -u {{ mysql_user }} -p{{ mysql_user_password }} -e "SHOW DATABASES;"
+      register: db_check
+
+    - name: Show DB list
+      debug:
+        var: db_check.stdout_lines
+
