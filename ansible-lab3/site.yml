@@ -1,9 +1,0 @@
----
-- name: Install Docker, kubectl, and Jenkins
-  hosts: webservers
-  become: yes
-  roles:
-    - docker
-    - kubectl
-    - jenkins
-
