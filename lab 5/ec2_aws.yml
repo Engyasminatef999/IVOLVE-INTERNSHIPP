@@ -1,0 +1,10 @@
+plugin: amazon.aws.ec2
+regions:
+  - us-east-1        
+filters:
+  tag:Name: ivolve   
+hostnames:
+  - public-ip-address
+compose:
+  ansible_user: "'ubuntu'"   
+
