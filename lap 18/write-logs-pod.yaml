@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logger-pod
+spec:
+  # لو تريد تتأكد إنه يشتغل على نود محدد (عشان hostPath موجود هناك) استخدم nodeSelector أو nodeName
+  # nodeSelector:
+  #   kubernetes.io/hostname: name-of-app-node
+  containers:
+    - name: logger
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          echo "starting logger at $(date)" >> /var/log/app/log.txt;
+          # append every 5s for demonstration (سيبها قصيرة)
+          for i in $(seq 1 30); do
+            echo "$(date) log line $i" >> /var/log/app/log.txt;
+            sleep 2;
+          done
+          sleep 3600
+      volumeMounts:
+        - mountPath: /var/log/app
+          name: app-logs
+  volumes:
+    - name: app-logs
+      persistentVolumeClaim:
+        claimName: app-logs-pvc
+  restartPolicy: Never
+
