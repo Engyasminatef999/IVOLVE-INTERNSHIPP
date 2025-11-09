@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-mysql
+spec:
+  podSelector:
+    matchLabels:
+      app: mysql   # يستهدف pods بتاعة mysql
+  policyTypes:
+  - Ingress       # التحكم في الدخول فقط
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nodejs   # يسمح للـ pods الخاصة بالتطبيق nodejs فقط
+    ports:
+    - protocol: TCP
+      port: 3306       # يفتح بس البورت 3306
+
